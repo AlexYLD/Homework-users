@@ -19,10 +19,9 @@ public class MainWriter {
 
     public static void main(String[] args) {
         ArrayList<User> users = new ArrayList<>();
-        String forParse;
-        String[] afterParse = new String[User.class.getDeclaredFields().length];
-        int fieldCount = 0;
+        String userInput = null;
         Field[] declaredFields = User.class.getDeclaredFields();
+        User user;
         boolean breaker = false;
         boolean notBlank;
         boolean validLength;
@@ -31,40 +30,37 @@ public class MainWriter {
         try (InputStreamReader in = new InputStreamReader(System.in);
              BufferedReader br = new BufferedReader(in)) {
             while (!breaker) {
+                user = User.class.newInstance();
                 for (Field field : declaredFields) {
-                    if (field.getName().equals("id")) continue;
                     do {
+                        if (field.getName().equals("id")) break;
                         System.out.println("Insert " + getFieldName(field) + " or -1 to exit");
-                        forParse = br.readLine();
-                        if (forParse.equals("-1")) {
+                        userInput = br.readLine();
+                        if (userInput.equals("-1")) {
                             breaker = true;
                             break;
                         }
-                        validLength = isLengthValid(field, forParse);
-                        notBlank = isNotBlank(field, forParse);
-                        validEmail = isValidEmail(field, forParse);
+                        validLength = isLengthValid(field, userInput);
+                        notBlank = isNotBlank(field, userInput);
+                        validEmail = isValidEmail(field, userInput);
                     } while (!notBlank || !validLength || !validEmail);
                     if (breaker) break;
-                    afterParse[fieldCount++] = forParse;
-                }
-                if (breaker) break;
-                User user = User.class.newInstance();
 
-                fieldCount = 0;
-                for (Field field : declaredFields) {
                     field.setAccessible(true);
                     if (field.getName().equals("id")) {
                         field.set(user, users.size() + 1);
                     } else {
-                        field.set(user, afterParse[fieldCount++]);
+                        field.set(user, userInput);
                     }
                 }
-                fieldCount = 0;
+                if (breaker) break;
+
                 if (!users.contains(user)) {
                     users.add(user);
                     System.out.println("User was added");
                     srialize(users);
                 } else {
+                    user = null;
                     System.out.println("User already exists");
                 }
 
