@@ -1,15 +1,42 @@
-package com.company;
+package com.company.entities;
+
+import com.company.annotations.Email;
+import com.company.annotations.HowToPrint;
+import com.company.annotations.Length;
+import com.company.annotations.NotBlank;
 
 import java.io.Serializable;
 
-public class User implements Serializable{
+public class User implements Serializable {
     private int id;
+    @NotBlank
+    @HowToPrint(printValue = "User name")
+    @Length(minValue = 1, maxValue = 15)
     private String username;
+
+    @NotBlank
+    @HowToPrint(printValue = "Password")
+    @Length(minValue = 1, maxValue = 15)
     private String password;
+
+    @NotBlank
+    @HowToPrint(printValue = "First name")
+    @Length(minValue = 1, maxValue = 15)
     private String fname;
+
+    @NotBlank
+    @HowToPrint(printValue = "Last name")
+    @Length(minValue = 1, maxValue = 15)
     private String lname;
+
+    @NotBlank
+    @HowToPrint(printValue = "Email")
+    @Email
     private String email;
 
+    public User() {
+
+    }
 
     public User(int id, String username, String password, String fname, String lname, String email) {
         this.id = id;
